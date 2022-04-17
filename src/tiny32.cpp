@@ -32,7 +32,7 @@ tiny32::tiny32(){
     pinMode(LED_D5,OUTPUT);
     pinMode(RELAY,OUTPUT);
     pinMode(BUZZER,OUTPUT);
-    digitalWrite(LED_BUILTIN,HIGH);
+    digitalWrite(LED_BUILTIN,LOW);
     digitalWrite(LED_D1,LOW);
     digitalWrite(LED_D5,LOW);
     digitalWrite(BUZZER,LOW);

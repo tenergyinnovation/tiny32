@@ -1,6 +1,6 @@
 /***********************************************************************
  * Project      :     Example_BlinkLED_Test
- * Description  :     Test Blink LED without relay
+ * Description  :     Test Blink LED without relay time
  * Hardware     :     tiny32         
  * Author       :     Tenergy Innovation Co., Ltd.
  * Date         :     19/02/2022
