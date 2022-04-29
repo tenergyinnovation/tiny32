@@ -16,6 +16,7 @@ tiny32 mcu; //define object
 void setup() {
   Serial.begin(115200);
   Serial.printf("\r\n**** Example_BuzzerTest ****\r\n");
+  mcu.library_version();
 }
 
 void loop() {

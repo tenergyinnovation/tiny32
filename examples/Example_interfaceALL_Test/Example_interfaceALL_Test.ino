@@ -23,6 +23,7 @@ void setup() {
   Serial.printf("\r\n**** Example_interfaceALL_Test ****\r\n");
   RS485.printf("\r\n**** Example_interfaceALL_Test ****\r\n");
   mcu.buzzer_beep(1);
+  mcu.library_version();
 }
 
 void loop() {

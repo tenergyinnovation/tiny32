@@ -3,7 +3,7 @@
  * Description  :     Class for Hardware config and function for blynkide32_v2 module
  * Author       :     Tenergy Innovation Co., Ltd.
  * Date         :     23 Nov 2021
- * Revision     :     1.6
+ * Revision     :     1.7
  * Rev1.0       :     Original 
  * Rev1.1       :     Add TimeStamp_minute  
  *                    Add TimeStamp_24hr_minute
@@ -14,6 +14,7 @@
  *                    Add PZEM-003 Energy Meter DC  
  *                    Add rs485_2.begin(9600, SERIAL_8N2, RXD2, TXD2) for PZEM-003   
  * Rev1.6             Intial board to BuildIN LED = > LOW  
+ * Rev1.7       :     Fix bug for PZEM-003 and PZEM-016 were read data error      
  * website      :     http://www.tenergyinnovation.co.th
  * Email        :     uten.boonliam@innovation.co.th
  * TEL          :     089-140-7205
@@ -27,7 +28,7 @@
 class tiny32
 {
 private:
-#define version_c  "1.6"
+#define version_c  "1.7"
 
     /* data */
 
@@ -56,7 +57,7 @@ void buzzer_beep(int times);
 bool Sw1(void);
 bool Sw2(void);
 bool Slid_sw(void);
-void class_version(void);
+void library_version(void);
 
 private:
 uint8_t _resolution_bit;

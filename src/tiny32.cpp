@@ -43,14 +43,14 @@ tiny32::tiny32(){
 
 
  /***********************************************************************
- * FUNCTION:    class_version
- * DESCRIPTION: Print out class version
+ * FUNCTION:    library_version
+ * DESCRIPTION: Print out library version
  * PARAMETERS:  nothing
  * RETURNED:    nothing
  ***********************************************************************/
-void tiny32::class_version(void) 
+void tiny32::library_version(void) 
 { 
-    Serial.printf("class version: %s\r\n",version_c); 
+    Serial.printf("library version: %s\r\n",version_c); 
 }
 
  /***********************************************************************
@@ -538,7 +538,7 @@ bool tiny32::PZEM_016(uint8_t id, float &volt, float &amp, float &power, uint16_
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[25];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[25];
 
@@ -617,58 +617,40 @@ bool tiny32::PZEM_016(uint8_t id, float &volt, float &amp, float &power, uint16_
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 25){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+       /**** correct data to buffer variable ****/
+    if(_byte_cnt == 25){
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
+    //Collect data
+    for(int i=0; i<25; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
 
-      /*Simulate current at 98.765AMP*/
-      // _data_check[5] = 0x81;
-      // _data_check[6] = 0xCD; 
-      // _data_check[7] = 0x00;
-      // _data_check[8] = 0x01;
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 25){
 
-      /*power value*/
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
+      uint8_t _addcnt = _byte_cnt - 25; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*frequency value*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /* power factor value*/
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
-      /*alarm status*/
-      _data_check[21] = _data_read[21];
-      _data_check[22] = _data_read[22];
-
-      /*check sum*/
-      _data_check[23] = _data_read[23];
-      _data_check[24] = _data_read[24];
+      //Collect data
+      for(int i=0; i<25; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -842,7 +824,7 @@ float  tiny32::PZEM_016_Volt(uint8_t id)
     uint16_t _crc_r = 0xffff;
     uint16_t _temp_hex_16bit = 0xffff;
     uint8_t _data_write[8];
-    uint8_t _data_read[25];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[25];
 
@@ -922,52 +904,39 @@ float  tiny32::PZEM_016_Volt(uint8_t id)
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 25){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 25){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<25; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 25){
 
-      /*power value*/
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
+      uint8_t _addcnt = _byte_cnt - 25; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*frequency value*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /* power factor value*/
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
-      /*alarm status*/
-      _data_check[21] = _data_read[21];
-      _data_check[22] = _data_read[22];
-
-      /*check sum*/
-      _data_check[23] = _data_read[23];
-      _data_check[24] = _data_read[24];
+      //Collect data
+      for(int i=0; i<25; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -987,8 +956,7 @@ float  tiny32::PZEM_016_Volt(uint8_t id)
     {
       Serial.printf("Error: data error\r\n");
       return -1;
-    }
-
+    }    
 
     /*** crc check for data read ***/ 
     _crc = 0xffff;
@@ -1053,7 +1021,7 @@ float  tiny32::PZEM_016_Amp(uint8_t id)
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[25];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[25];
 
@@ -1133,52 +1101,39 @@ float  tiny32::PZEM_016_Amp(uint8_t id)
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 25){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 25){
 
-      /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<25; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 25){
 
-      /*power value*/
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
+      uint8_t _addcnt = _byte_cnt - 25; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*frequency value*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /* power factor value*/
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
-      /*alarm status*/
-      _data_check[21] = _data_read[21];
-      _data_check[22] = _data_read[22];
-
-      /*check sum*/
-      _data_check[23] = _data_read[23];
-      _data_check[24] = _data_read[24];
+      //Collect data
+      for(int i=0; i<25; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -1199,7 +1154,6 @@ float  tiny32::PZEM_016_Amp(uint8_t id)
       Serial.printf("Error: data error\r\n");
       return -1;
     }
-
 
     /*** crc check for data read ***/ 
     _crc = 0xffff;
@@ -1274,7 +1228,7 @@ float  tiny32::PZEM_016_Power(uint8_t id)
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[25];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[25];
 
@@ -1353,52 +1307,39 @@ float  tiny32::PZEM_016_Power(uint8_t id)
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 25){
+        /**** correct data to buffer variable ****/
+    if(_byte_cnt == 25){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<25; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 25){
 
-      /*power value*/
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
+      uint8_t _addcnt = _byte_cnt - 25; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*frequency value*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /* power factor value*/
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
-      /*alarm status*/
-      _data_check[21] = _data_read[21];
-      _data_check[22] = _data_read[22];
-
-      /*check sum*/
-      _data_check[23] = _data_read[23];
-      _data_check[24] = _data_read[24];
+      //Collect data
+      for(int i=0; i<25; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -1418,7 +1359,8 @@ float  tiny32::PZEM_016_Power(uint8_t id)
     {
       Serial.printf("Error: data error\r\n");
       return -1;
-    }
+    }    
+
 
 
     /*** crc check for data read ***/ 
@@ -1496,7 +1438,7 @@ int16_t tiny32::PZEM_016_Energy(uint8_t id)
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[25];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[25];
 
@@ -1575,52 +1517,39 @@ int16_t tiny32::PZEM_016_Energy(uint8_t id)
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 25){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 25){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<25; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 25){
 
-      /*power value*/
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
+      uint8_t _addcnt = _byte_cnt - 25; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*frequency value*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /* power factor value*/
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
-      /*alarm status*/
-      _data_check[21] = _data_read[21];
-      _data_check[22] = _data_read[22];
-
-      /*check sum*/
-      _data_check[23] = _data_read[23];
-      _data_check[24] = _data_read[24];
+      //Collect data
+      for(int i=0; i<25; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -1640,7 +1569,8 @@ int16_t tiny32::PZEM_016_Energy(uint8_t id)
     {
       Serial.printf("Error: data error\r\n");
       return -1;
-    }
+    }    
+
 
 
     /*** crc check for data read ***/ 
@@ -1715,7 +1645,7 @@ float tiny32::PZEM_016_Freq(uint8_t id)
     uint16_t _temp_hex_16bit = 0xffff;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[25];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[25];
 
@@ -1779,6 +1709,8 @@ float tiny32::PZEM_016_Freq(uint8_t id)
       }while(rs485.available()>0 && _byte_cnt<sizeof(_data_read));
       
 
+
+
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
       Serial.printf("Data read(%d): [ ",_byte_cnt);
@@ -1794,52 +1726,39 @@ float tiny32::PZEM_016_Freq(uint8_t id)
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 25){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 25){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<25; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 25){
 
-      /*power value*/
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
+      uint8_t _addcnt = _byte_cnt - 25; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*frequency value*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /* power factor value*/
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
-      /*alarm status*/
-      _data_check[21] = _data_read[21];
-      _data_check[22] = _data_read[22];
-
-      /*check sum*/
-      _data_check[23] = _data_read[23];
-      _data_check[24] = _data_read[24];
+      //Collect data
+      for(int i=0; i<25; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -1859,7 +1778,7 @@ float tiny32::PZEM_016_Freq(uint8_t id)
     {
       Serial.printf("Error: data error\r\n");
       return -1;
-    }
+    }    
 
 
     /*** crc check for data read ***/ 
@@ -1925,7 +1844,7 @@ float tiny32::PZEM_016_PF(uint8_t id)
     uint16_t _temp_hex_16bit = 0xffff;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[25];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[25];
 
@@ -2005,51 +1924,39 @@ float tiny32::PZEM_016_PF(uint8_t id)
     } 
 
     
-   
-   if(_byte_cnt == 25){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 25){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<25; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 25){
 
-      /*power value*/
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
+      uint8_t _addcnt = _byte_cnt - 25; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*frequency value*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /* power factor value*/
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
-      /*alarm status*/
-      _data_check[21] = _data_read[21];
-      _data_check[22] = _data_read[22];
-
-      /*check sum*/
-      _data_check[23] = _data_read[23];
-      _data_check[24] = _data_read[24];
+      //Collect data
+      for(int i=0; i<25; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -2069,7 +1976,7 @@ float tiny32::PZEM_016_PF(uint8_t id)
     {
       Serial.printf("Error: data error\r\n");
       return -1;
-    }
+    }    
 
 
     /*** crc check for data read ***/ 
@@ -2132,7 +2039,7 @@ bool tiny32::PZEM_016_ResetEnergy(uint8_t id)
     uint16_t _crc_r = 0xffff;
 
     uint8_t _data_write[4];
-    uint8_t _data_read[4];
+    uint8_t _data_read[20];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[4];
 
@@ -2206,6 +2113,7 @@ bool tiny32::PZEM_016_ResetEnergy(uint8_t id)
             } 
         }
         Serial.println("]");
+        Serial.printf("Debug: Byte count => %d\r\n",_byte_cnt);
         #endif
     } 
 
@@ -2232,6 +2140,29 @@ bool tiny32::PZEM_016_ResetEnergy(uint8_t id)
       Serial.println("]");
       #endif
     }
+   if(_byte_cnt > 4){
+
+    uint8_t _addcnt = _byte_cnt - 4;
+    for(int i=0; i<4; i++)
+    {
+      _data_check[i] = _data_read[i+_addcnt]; 
+    }
+
+  
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }    
     else
     {
       Serial.printf("Error: data error\r\n");
@@ -2296,7 +2227,7 @@ int8_t tiny32::PZEM_016_SetAddress(uint8_t id, uint8_t new_id)
     uint16_t _crc = 0xffff;
     uint16_t _crc_r = 0xffff;
     uint8_t _data_write[8];
-    uint8_t _data_read[8];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[8];
 
@@ -2374,6 +2305,7 @@ int8_t tiny32::PZEM_016_SetAddress(uint8_t id, uint8_t new_id)
             } 
         }
         Serial.println("]");
+        Serial.printf("Byte Count = %d\r\n",_byte_cnt);
         #endif
     } 
 
@@ -2381,18 +2313,35 @@ int8_t tiny32::PZEM_016_SetAddress(uint8_t id, uint8_t new_id)
    
    if(_byte_cnt == 8){
 
- 
-      _data_check[0] = _data_read[0];
-      _data_check[1] = _data_read[1];
-      _data_check[2] = _data_read[2]; 
+      for(int i=0; i<8; i++)
+      {
+        _data_check[i] = _data_read[i];
+      }
 
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
-      _data_check[7] = _data_read[7];
-     
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 8){
+
+      uint8_t _addcnt = _byte_cnt - 8;
+      for(int i=0; i<8; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt]; 
+      }
+
+
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -2456,7 +2405,6 @@ int8_t tiny32::PZEM_016_SetAddress(uint8_t id, uint8_t new_id)
  * PARAMETERS:  nothing
  * RETURNED:    Address
  ***********************************************************************/
-
 int8_t tiny32::PZEM_016_SearchAddress(void)
 {
 
@@ -2467,7 +2415,7 @@ int8_t tiny32::PZEM_016_SearchAddress(void)
     uint16_t _crc = 0xffff;
     uint16_t _crc_r = 0xffff;
     uint8_t _data_write[8];
-    uint8_t _data_read[25];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[25];
 
@@ -2567,48 +2515,10 @@ int8_t tiny32::PZEM_016_SearchAddress(void)
       
       if(_byte_cnt == 25){
 
-        /*header data*/
-          _data_check[0] = _data_read[0]; //id
-          _data_check[1] = _data_read[1]; //function
-          _data_check[2] = _data_read[2]; //data length(Quantity)
-
-          /*voltage value*/
-          _data_check[3] = _data_read[3];
-          _data_check[4] = _data_read[4];
-
-          /*current value*/
-          _data_check[5] = _data_read[5];
-          _data_check[6] = _data_read[6]; 
-          _data_check[7] = _data_read[7];
-          _data_check[8] = _data_read[8];
-
-          /*power value*/
-          _data_check[9] = _data_read[9];
-          _data_check[10] = _data_read[10];
-          _data_check[11] = _data_read[11];
-          _data_check[12] = _data_read[12];
-
-          /*energy value*/
-          _data_check[13] = _data_read[13];
-          _data_check[14] = _data_read[14];
-          _data_check[15] = _data_read[15];
-          _data_check[16] = _data_read[16];
-
-          /*frequency value*/
-          _data_check[17] = _data_read[17];
-          _data_check[18] = _data_read[18];
-
-          /* power factor value*/
-          _data_check[19] = _data_read[19];
-          _data_check[20] = _data_read[20];
-
-          /*alarm status*/
-          _data_check[21] = _data_read[21];
-          _data_check[22] = _data_read[22];
-
-          /*check sum*/
-          _data_check[23] = _data_read[23];
-          _data_check[24] = _data_read[24];
+          for(int i=0; i<25; i++)
+          {
+            _data_check[i] = _data_read[i];
+          }
 
           /***** Debug monitor ****/
           #ifdef modbusRTU_Debug
@@ -2664,6 +2574,67 @@ int8_t tiny32::PZEM_016_SearchAddress(void)
         
         
         }
+      
+      else if(_byte_cnt > 25)
+      {
+        
+        uint8_t _addcnt = _byte_cnt - 25; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
+        //Collect data
+        for(int i=0; i<25; i++)
+        {
+          _data_check[i] = _data_read[i+_addcnt];
+        }
+          /***** Debug monitor ****/
+          #ifdef modbusRTU_Debug
+          Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+          for(byte _i=0; _i<sizeof(_data_check); _i++){
+              if( _data_check[_i] > 0x0F ){
+                Serial.printf("0x%X ",_data_check[_i]);
+              }
+              else{
+                Serial.printf("0x0%X ",_data_check[_i]);
+              } 
+          }
+          Serial.println("]");
+          #endif
+
+
+           /*** crc check for data read ***/ 
+        _crc = 0xffff;
+        _crc_r = 0xffff;
+        
+        // Generate CRC16
+        for(byte _i=0; _i < sizeof(_data_check)-2; _i++){
+            _crc = crc16_update(_crc, _data_check[_i]);
+        } 
+        #ifdef modbusRTU_Debug
+        Serial.printf("Debug: _crc = 0x%X\r\n",_crc);
+        #endif
+
+        // read crc byte from data_check
+        _crc_r = _data_check[sizeof(_data_check)-1]; //Serial.print(">>"); Serial.println(_crc_r,HEX);
+        _crc_r = _crc_r <<8; //Serial.print(">>"); Serial.println(_crc_r,HEX);
+        _crc_r = _crc_r + _data_check[sizeof(_data_check)-2]; //Serial.print(">>"); Serial.println(_crc_r,HEX);      
+        #ifdef modbusRTU_Debug 
+        Serial.printf("Debug: _crc_r = 0x%X\r\n",_crc_r);
+        #endif
+
+        //return ON/OFF status
+        if(_crc_r == _crc)
+        {
+
+
+          Serial.printf("\r\nInfo: the Address of this PZEM-016 => %d [Success]\r\n",_id);
+          return _id;
+
+
+        }  
+        else
+        {
+          // Serial.printf("Error: crc16\r\n");
+        } 
+
+      }
       else
       {
         Serial.printf(".");
@@ -2696,7 +2667,8 @@ bool tiny32::PZEM_003(uint8_t id, float &volt, float &amp, float &power, uint16_
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[21];
+    // uint8_t _data_read[21];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[21];
 
@@ -2772,50 +2744,44 @@ bool tiny32::PZEM_003(uint8_t id, float &volt, float &amp, float &power, uint16_
             } 
         }
         Serial.println("]");
+        Serial.printf("Debug: Count byte => %d\r\n",_byte_cnt);
         #endif
     } 
 
     
-   
-   if(_byte_cnt == 21){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 21){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<21; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 21){
 
-      /*power value*/
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
+      uint8_t _addcnt = _byte_cnt - 21; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-
-      /*high voltage alarm status*/
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*low voltage alarm status*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /*check sum */
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
+      //Collect data
+      for(int i=0; i<21; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -2960,7 +2926,7 @@ float tiny32::PZEM_003_Volt(uint8_t id)
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[21];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[21];
 
@@ -3040,46 +3006,39 @@ float tiny32::PZEM_003_Volt(uint8_t id)
     } 
 
     
-   
-   if(_byte_cnt == 21){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 21){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<21; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 21){
 
-      /*power value*/
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
+      uint8_t _addcnt = _byte_cnt - 21; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-
-      /*high voltage alarm status*/
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*low voltage alarm status*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /*check sum */
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
+      //Collect data
+      for(int i=0; i<21; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -3098,9 +3057,8 @@ float tiny32::PZEM_003_Volt(uint8_t id)
     else
     {
       Serial.printf("Error: data error\r\n");
-      return -1;
+      return 0;
     }
-
 
     /*** crc check for data read ***/ 
     _crc = 0xffff;
@@ -3165,7 +3123,7 @@ float tiny32::PZEM_003_Amp(uint8_t id)
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[21];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[21];
 
@@ -3244,47 +3202,39 @@ float tiny32::PZEM_003_Amp(uint8_t id)
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 21){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 21){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<21; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 21){
 
-      /*power value*/
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
+      uint8_t _addcnt = _byte_cnt - 21; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-
-      /*high voltage alarm status*/
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*low voltage alarm status*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /*check sum */
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
+      //Collect data
+      for(int i=0; i<21; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -3303,9 +3253,10 @@ float tiny32::PZEM_003_Amp(uint8_t id)
     else
     {
       Serial.printf("Error: data error\r\n");
-      return -1;
+      return 0;
     }
 
+    
 
     /*** crc check for data read ***/ 
     _crc = 0xffff;
@@ -3372,7 +3323,7 @@ float tiny32::PZEM_003_Power(uint8_t id)
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[21];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[21];
 
@@ -3451,47 +3402,39 @@ float tiny32::PZEM_003_Power(uint8_t id)
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 21){
+        /**** correct data to buffer variable ****/
+    if(_byte_cnt == 21){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<21; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 21){
 
-      /*power value*/
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
+      uint8_t _addcnt = _byte_cnt - 21; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-
-      /*high voltage alarm status*/
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*low voltage alarm status*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /*check sum */
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
+      //Collect data
+      for(int i=0; i<21; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -3510,7 +3453,7 @@ float tiny32::PZEM_003_Power(uint8_t id)
     else
     {
       Serial.printf("Error: data error\r\n");
-      return -1;
+      return 0;
     }
 
 
@@ -3592,7 +3535,7 @@ int16_t tiny32::PZEM_003_Energy(uint8_t id)
     uint32_t _temp_hex_32bit = 0x00000000;
 
     uint8_t _data_write[8];
-    uint8_t _data_read[21];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[21];
 
@@ -3671,47 +3614,39 @@ int16_t tiny32::PZEM_003_Energy(uint8_t id)
         #endif
     } 
 
-    
-   
-   if(_byte_cnt == 21){
+    /**** correct data to buffer variable ****/
+    if(_byte_cnt == 21){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+    //Collect data
+    for(int i=0; i<21; i++)
+    {
+      _data_check[i] = _data_read[i];
+    }
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
+      /***** Debug monitor ****/
+      #ifdef modbusRTU_Debug
+      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+      for(byte _i=0; _i<sizeof(_data_check); _i++){
+          if( _data_check[_i] > 0x0F ){
+            Serial.printf("0x%X ",_data_check[_i]);
+          }
+          else{
+            Serial.printf("0x0%X ",_data_check[_i]);
+          } 
+      }
+      Serial.println("]");
+      #endif
+    }
+    else if(_byte_cnt > 21){
 
-      /*power value*/
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
+      uint8_t _addcnt = _byte_cnt - 21; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
 
-      /*energy value*/
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-
-      /*high voltage alarm status*/
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*low voltage alarm status*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /*check sum */
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
+      //Collect data
+      for(int i=0; i<21; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
 
       /***** Debug monitor ****/
       #ifdef modbusRTU_Debug
@@ -3730,7 +3665,7 @@ int16_t tiny32::PZEM_003_Energy(uint8_t id)
     else
     {
       Serial.printf("Error: data error\r\n");
-      return -1;
+      return 0;
     }
 
 
@@ -3801,13 +3736,13 @@ int16_t tiny32::PZEM_003_Energy(uint8_t id)
  ***********************************************************************/
 bool tiny32::PZEM_003_ResetEnergy(uint8_t id) 
 {
-  #define modbusRTU_Debug
+    // #define modbusRTU_Debug
 
     uint16_t _crc = 0xffff;
     uint16_t _crc_r = 0xffff;
 
     uint8_t _data_write[4];
-    uint8_t _data_read[4];
+    uint8_t _data_read[20];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[4];
 
@@ -3881,37 +3816,67 @@ bool tiny32::PZEM_003_ResetEnergy(uint8_t id)
             } 
         }
         Serial.println("]");
+        Serial.printf("Debug: Byte Count => %d\r\n",_byte_cnt);
         #endif
     } 
 
    
-   if(_byte_cnt == 4){
+  if(_byte_cnt == 4){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; 
-      _data_check[1] = _data_read[1]; 
-      _data_check[2] = _data_read[2]; 
-      _data_check[3] = _data_read[3];
-  
-      /***** Debug monitor ****/
-      #ifdef modbusRTU_Debug
-      Serial.printf("Data check(%d): [ ",sizeof(_data_check));
-      for(byte _i=0; _i<sizeof(_data_check); _i++){
-          if( _data_check[_i] > 0x0F ){
-            Serial.printf("0x%X ",_data_check[_i]);
-          }
-          else{
-            Serial.printf("0x0%X ",_data_check[_i]);
-          } 
-      }
-      Serial.println("]");
-      #endif
-    }
-    else
+    /*header data*/
+    _data_check[0] = _data_read[0]; 
+    _data_check[1] = _data_read[1]; 
+    _data_check[2] = _data_read[2]; 
+    _data_check[3] = _data_read[3];
+
+    for(int i=0; i<_byte_cnt; i++)
     {
-      Serial.printf("Error: data error\r\n");
-      return 0;
+      _data_check[i] = _data_read[i]; 
     }
+
+    /***** Debug monitor ****/
+    #ifdef modbusRTU_Debug
+    Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+    for(byte _i=0; _i<sizeof(_data_check); _i++){
+        if( _data_check[_i] > 0x0F ){
+          Serial.printf("0x%X ",_data_check[_i]);
+        }
+        else{
+          Serial.printf("0x0%X ",_data_check[_i]);
+        } 
+    }
+    Serial.println("]");
+    #endif
+
+  }
+  else if( _byte_cnt > 4)
+  {
+    uint8_t _addcnt = _byte_cnt - 4;
+    for(int i=0; i<4; i++)
+    {
+      _data_check[i] = _data_read[i+_addcnt]; 
+    }
+
+    /***** Debug monitor ****/
+    #ifdef modbusRTU_Debug
+    Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+    for(byte _i=0; _i<sizeof(_data_check); _i++){
+        if( _data_check[_i] > 0x0F ){
+          Serial.printf("0x%X ",_data_check[_i]);
+        }
+        else{
+          Serial.printf("0x0%X ",_data_check[_i]);
+        } 
+    }
+    Serial.println("]");
+    #endif
+
+  } 
+  else
+  {
+    Serial.printf("Error: data error\r\n");
+    return 0;
+  }
 
 
     /*** crc check for data read ***/ 
@@ -3972,7 +3937,7 @@ int8_t tiny32::PZEM_003_SetAddress(uint8_t id, uint8_t new_id)
     uint16_t _crc = 0xffff;
     uint16_t _crc_r = 0xffff;
     uint8_t _data_write[8];
-    uint8_t _data_read[8];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[8];
 
@@ -4050,12 +4015,13 @@ int8_t tiny32::PZEM_003_SetAddress(uint8_t id, uint8_t new_id)
             } 
         }
         Serial.println("]");
+        Serial.printf("Byte count = %d\r\n",_byte_cnt);
         #endif
     } 
 
     
    
-   if(_byte_cnt == 8){
+  if(_byte_cnt == 8){
 
  
       _data_check[0] = _data_read[0];
@@ -4083,8 +4049,31 @@ int8_t tiny32::PZEM_003_SetAddress(uint8_t id, uint8_t new_id)
       }
       Serial.println("]");
       #endif
+    } 
+  else if( _byte_cnt > 8)
+  {
+    uint8_t _addcnt = _byte_cnt - 8;
+    for(int i=0; i<8; i++)
+    {
+      _data_check[i] = _data_read[i+_addcnt]; 
     }
-    else
+
+    /***** Debug monitor ****/
+    #ifdef modbusRTU_Debug
+    Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+    for(byte _i=0; _i<sizeof(_data_check); _i++){
+        if( _data_check[_i] > 0x0F ){
+          Serial.printf("0x%X ",_data_check[_i]);
+        }
+        else{
+          Serial.printf("0x0%X ",_data_check[_i]);
+        } 
+    }
+    Serial.println("]");
+    #endif
+    
+  }   
+  else
     {
       Serial.printf("Error: data error\r\n");
       return -1;
@@ -4143,7 +4132,7 @@ int8_t tiny32::PZEM_003_SearchAddress(void)
     uint16_t _crc = 0xffff;
     uint16_t _crc_r = 0xffff;
     uint8_t _data_write[8];
-    uint8_t _data_read[21];
+    uint8_t _data_read[40];
     uint8_t _byte_cnt = 0;
     uint8_t _data_check[21];
 
@@ -4238,102 +4227,130 @@ int8_t tiny32::PZEM_003_SearchAddress(void)
             #endif
         } 
 
-        
-      
+      /* Collect data to variable buffer */
       if(_byte_cnt == 21){
 
-     /*header data*/
-      _data_check[0] = _data_read[0]; //id
-      _data_check[1] = _data_read[1]; //function
-      _data_check[2] = _data_read[2]; //data length(Quantity)
+        for(int i=0; i<21; i++)
+        {
+          _data_check[i] = _data_read[i];
+        }
+     
 
-      /*voltage value*/
-      _data_check[3] = _data_read[3];
-      _data_check[4] = _data_read[4];
+            /***** Debug monitor ****/
+            #ifdef modbusRTU_Debug
+            Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+            for(byte _i=0; _i<sizeof(_data_check); _i++){
+                if( _data_check[_i] > 0x0F ){
+                  Serial.printf("0x%X ",_data_check[_i]);
+                }
+                else{
+                  Serial.printf("0x0%X ",_data_check[_i]);
+                } 
+            }
+            Serial.println("]");
+            #endif
 
-      /*current value*/
-      _data_check[5] = _data_read[5];
-      _data_check[6] = _data_read[6]; 
 
-      /*power value*/
-      _data_check[7] = _data_read[7];
-      _data_check[8] = _data_read[8];
-      _data_check[9] = _data_read[9];
-      _data_check[10] = _data_read[10];
-
-      /*energy value*/
-      _data_check[11] = _data_read[11];
-      _data_check[12] = _data_read[12];
-      _data_check[13] = _data_read[13];
-      _data_check[14] = _data_read[14];
-
-      /*high voltage alarm status*/
-      _data_check[15] = _data_read[15];
-      _data_check[16] = _data_read[16];
-
-      /*low voltage alarm status*/
-      _data_check[17] = _data_read[17];
-      _data_check[18] = _data_read[18];
-
-      /*check sum */
-      _data_check[19] = _data_read[19];
-      _data_check[20] = _data_read[20];
-
-          /***** Debug monitor ****/
+            /*** crc check for data read ***/ 
+          _crc = 0xffff;
+          _crc_r = 0xffff;
+          
+          // Generate CRC16
+          for(byte _i=0; _i < sizeof(_data_check)-2; _i++){
+              _crc = crc16_update(_crc, _data_check[_i]);
+          } 
           #ifdef modbusRTU_Debug
-          Serial.printf("Data check(%d): [ ",sizeof(_data_check));
-          for(byte _i=0; _i<sizeof(_data_check); _i++){
-              if( _data_check[_i] > 0x0F ){
-                Serial.printf("0x%X ",_data_check[_i]);
-              }
-              else{
-                Serial.printf("0x0%X ",_data_check[_i]);
-              } 
-          }
-          Serial.println("]");
+          Serial.printf("Debug: _crc = 0x%X\r\n",_crc);
           #endif
 
+          // read crc byte from data_check
+          _crc_r = _data_check[sizeof(_data_check)-1]; //Serial.print(">>"); Serial.println(_crc_r,HEX);
+          _crc_r = _crc_r <<8; //Serial.print(">>"); Serial.println(_crc_r,HEX);
+          _crc_r = _crc_r + _data_check[sizeof(_data_check)-2]; //Serial.print(">>"); Serial.println(_crc_r,HEX);      
+          #ifdef modbusRTU_Debug 
+          Serial.printf("Debug: _crc_r = 0x%X\r\n",_crc_r);
+          #endif
 
-           /*** crc check for data read ***/ 
-        _crc = 0xffff;
-        _crc_r = 0xffff;
-        
-        // Generate CRC16
-        for(byte _i=0; _i < sizeof(_data_check)-2; _i++){
-            _crc = crc16_update(_crc, _data_check[_i]);
-        } 
-        #ifdef modbusRTU_Debug
-        Serial.printf("Debug: _crc = 0x%X\r\n",_crc);
-        #endif
-
-        // read crc byte from data_check
-        _crc_r = _data_check[sizeof(_data_check)-1]; //Serial.print(">>"); Serial.println(_crc_r,HEX);
-        _crc_r = _crc_r <<8; //Serial.print(">>"); Serial.println(_crc_r,HEX);
-        _crc_r = _crc_r + _data_check[sizeof(_data_check)-2]; //Serial.print(">>"); Serial.println(_crc_r,HEX);      
-        #ifdef modbusRTU_Debug 
-        Serial.printf("Debug: _crc_r = 0x%X\r\n",_crc_r);
-        #endif
-
-        //return ON/OFF status
-        if(_crc_r == _crc)
-        {
+          //return ON/OFF status
+          if(_crc_r == _crc)
+          {
 
 
-          Serial.printf("\r\nInfo: the Address of this PZEM-003 => %d [Success]\r\n",_id);
-          return _id;
+            Serial.printf("\r\nInfo: the Address of this PZEM-003 => %d [Success]\r\n",_id);
+            return _id;
 
 
-        }  
-        else
-        {
-          // Serial.printf("Error: crc16\r\n");
-          return -1;
-        } 
+          }  
+          else
+          {
+            // Serial.printf("Error: crc16\r\n");
+            return -1;
+          }
+      } 
+
+      else if(_byte_cnt > 21){
+
+      uint8_t _addcnt = _byte_cnt - 21; //ตัวแปรชดเชยการอ่านค่าผิดตำแหน่ง
+
+      //Collect data
+      for(int i=0; i<21; i++)
+      {
+        _data_check[i] = _data_read[i+_addcnt];
+      }
+
+            /***** Debug monitor ****/
+            #ifdef modbusRTU_Debug
+            Serial.printf("Data check(%d): [ ",sizeof(_data_check));
+            for(byte _i=0; _i<sizeof(_data_check); _i++){
+                if( _data_check[_i] > 0x0F ){
+                  Serial.printf("0x%X ",_data_check[_i]);
+                }
+                else{
+                  Serial.printf("0x0%X ",_data_check[_i]);
+                } 
+            }
+            Serial.println("]");
+            #endif
 
 
-        
-        
-        }
+            /*** crc check for data read ***/ 
+          _crc = 0xffff;
+          _crc_r = 0xffff;
+          
+          // Generate CRC16
+          for(byte _i=0; _i < sizeof(_data_check)-2; _i++){
+              _crc = crc16_update(_crc, _data_check[_i]);
+          } 
+          #ifdef modbusRTU_Debug
+          Serial.printf("Debug: _crc = 0x%X\r\n",_crc);
+          #endif
+
+          // read crc byte from data_check
+          _crc_r = _data_check[sizeof(_data_check)-1]; //Serial.print(">>"); Serial.println(_crc_r,HEX);
+          _crc_r = _crc_r <<8; //Serial.print(">>"); Serial.println(_crc_r,HEX);
+          _crc_r = _crc_r + _data_check[sizeof(_data_check)-2]; //Serial.print(">>"); Serial.println(_crc_r,HEX);      
+          #ifdef modbusRTU_Debug 
+          Serial.printf("Debug: _crc_r = 0x%X\r\n",_crc_r);
+          #endif
+
+          //return ON/OFF status
+          if(_crc_r == _crc)
+          {
+
+
+            Serial.printf("\r\nInfo: the Address of this PZEM-003 => %d [Success]\r\n",_id);
+            return _id;
+
+
+          }  
+          else
+          {
+            // Serial.printf("Error: crc16\r\n");
+            return -1;
+          }     
+
+
+      }
       else
       {
         Serial.printf(".");

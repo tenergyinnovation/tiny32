@@ -25,6 +25,7 @@ String Percentage=""; //global string variable
 void setup() {
   Serial.begin(115200);
   Serial.printf("\r\n**** Example_PWM_Test ****\r\n");
+  mcu.library_version();
   mcu.PWM_Setup(CHANNEL, FREQ, RESOLUTION_BIT, PWM_PIN); //initial function
 }
 

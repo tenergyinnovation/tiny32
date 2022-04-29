@@ -18,6 +18,7 @@ void setup() {
   Serial.begin(115200);
   RS485.begin(9600, SERIAL_8N1, 17, 16);
   Serial.printf("\r\n**** Example_rs485_Test ****\r\n");
+  mcu.library_version();
 }
 
 void loop() {
