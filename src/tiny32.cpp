@@ -36,8 +36,6 @@ tiny32::tiny32(){
     digitalWrite(LED_D1,LOW);
     digitalWrite(LED_D5,LOW);
     digitalWrite(BUZZER,LOW);
-    rs485.begin(9600, SERIAL_8N1, RXD2, TXD2);
-    rs485_2.begin(9600, SERIAL_8N2, RXD2, TXD2);
 }
 
 
@@ -520,6 +518,28 @@ if(_byte_cnt == 7){
       Serial.printf("Error: crc16\r\n");
       return 0xffff;
     }    
+}
+
+
+/***********************************************************************
+ * FUNCTION:    ec_modbusRTU_begin
+ * DESCRIPTION: set RX and TX pin
+ * PARAMETERS:  rx, tx
+ * RETURNED:    true/ false
+ ***********************************************************************/
+bool tiny32::ec_modbusRTU_begin(uint8_t rx, uint8_t tx)
+{
+  if( ((tx== TXD2) || (tx== TXD3)) && ((rx== RXD2) || (rx== RXD3)) )
+  {
+    rs485.begin(9600, SERIAL_8N1, rx, tx);
+    return 1;
+  }
+  else
+  {
+    Serial.printf("Error: Fail to define RS485 port!!\r\n");
+    return 0;
+  }
+  
 }
 
 /***********************************************************************
@@ -2650,6 +2670,27 @@ int8_t tiny32::PZEM_016_SearchAddress(void)
 
 
 
+/***********************************************************************
+ * FUNCTION:    PZEM_016_begin
+ * DESCRIPTION: set RX and TX pin
+ * PARAMETERS:  rx, tx
+ * RETURNED:    true/ false
+ ***********************************************************************/
+bool tiny32::PZEM_016_begin(uint8_t rx, uint8_t tx)
+{
+  if( ((tx== TXD2) || (tx== TXD3)) && ((rx== RXD2) || (rx== RXD3)) )
+  {
+    rs485.begin(9600, SERIAL_8N1, rx, tx);
+    return 1;
+  }
+  else
+  {
+    Serial.printf("Error: Fail to define RS485 port!!\r\n");
+    return 0;
+  }
+  
+}
+
 
 /***********************************************************************
  * FUNCTION:    PZEM_003
@@ -4364,3 +4405,23 @@ int8_t tiny32::PZEM_003_SearchAddress(void)
 }
 
 
+/***********************************************************************
+ * FUNCTION:    PZEM_003_begin
+ * DESCRIPTION: set RX and TX pin
+ * PARAMETERS:  rx, tx
+ * RETURNED:    true/ false
+ ***********************************************************************/
+bool tiny32::PZEM_003_begin(uint8_t rx, uint8_t tx)
+{
+  if( ((tx== TXD2) || (tx== TXD3)) && ((rx== RXD2) || (rx== RXD3)) )
+  {
+    rs485_2.begin(9600, SERIAL_8N2, rx, tx);
+    return 1;
+  }
+  else
+  {
+    Serial.printf("Error: Fail to define RS485 port!!\r\n");
+    return 0;
+  }
+  
+}

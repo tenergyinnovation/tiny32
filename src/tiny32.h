@@ -3,7 +3,7 @@
  * Description  :     Class for Hardware config and function for blynkide32_v2 module
  * Author       :     Tenergy Innovation Co., Ltd.
  * Date         :     23 Nov 2021
- * Revision     :     1.7
+ * Revision     :     1.8
  * Rev1.0       :     Original 
  * Rev1.1       :     Add TimeStamp_minute  
  *                    Add TimeStamp_24hr_minute
@@ -14,7 +14,8 @@
  *                    Add PZEM-003 Energy Meter DC  
  *                    Add rs485_2.begin(9600, SERIAL_8N2, RXD2, TXD2) for PZEM-003   
  * Rev1.6             Intial board to BuildIN LED = > LOW  
- * Rev1.7       :     Fix bug for PZEM-003 and PZEM-016 were read data error      
+ * Rev1.7       :     Fix bug for PZEM-003 and PZEM-016 were read data error  
+ * Rev1.8       :     Add PZEM-003_begin, PZEM-016_begin and ec_modbusRTU_begin for initial set RS485 pin
  * website      :     http://www.tenergyinnovation.co.th
  * Email        :     uten.boonliam@innovation.co.th
  * TEL          :     089-140-7205
@@ -28,7 +29,7 @@
 class tiny32
 {
 private:
-#define version_c  "1.7"
+#define version_c  "1.8"
 
     /* data */
 
@@ -76,6 +77,7 @@ void TimeStamp_hour_minute_decode(uint16_t timestemp, uint16_t &h, uint16_t &mi)
 
 private:
 uint16_t ec_modbusRTU(uint8_t id);
+bool ec_modbusRTU_begin(uint8_t rx = RXD3, uint8_t tx = TXD3);
 
 public:
 /* PZEM-016 Modbus RTU AC power meter module */
@@ -89,6 +91,8 @@ float  PZEM_016_PF(uint8_t id);
 bool PZEM_016_ResetEnergy(uint8_t id);
 int8_t PZEM_016_SetAddress(uint8_t id, uint8_t new_id);
 int8_t PZEM_016_SearchAddress(void);
+bool PZEM_016_begin(uint8_t rx = RXD3, uint8_t tx = TXD3);
+
 
 
 /* PZEM-003 Modbus RTU DC power meter module */
@@ -100,6 +104,7 @@ int16_t  PZEM_003_Energy(uint8_t id);
 bool PZEM_003_ResetEnergy(uint8_t id);
 int8_t PZEM_003_SetAddress(uint8_t id, uint8_t new_id);
 int8_t PZEM_003_SearchAddress(void);
+bool PZEM_003_begin(uint8_t rx = RXD3, uint8_t tx = TXD3);
 
 };
 
