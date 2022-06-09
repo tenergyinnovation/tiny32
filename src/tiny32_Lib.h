@@ -1,6 +1,6 @@
 /***********************************************************************
  * File         :     tiny32_Lib.h
- * Description  :     Library for Hardware config and function for blynkide32_v2 module
+ * Description  :     Library for Hardware config and function for timy32_v2 module
  * Author       :     Tenergy Innovation Co., Ltd.
  * Date         :     23 Nov 2021
  * Revision     :     1.0

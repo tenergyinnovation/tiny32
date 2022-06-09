@@ -1,9 +1,9 @@
 /***********************************************************************
  * File         :     tiny32.h
- * Description  :     Class for Hardware config and function for blynkide32_v2 module
+ * Description  :     Class for Hardware config and function for tiny32_v2 module
  * Author       :     Tenergy Innovation Co., Ltd.
- * Date         :     23 Nov 2021
- * Revision     :     1.8
+ * Date         :     6 June 2021
+ * Revision     :     1.9
  * Rev1.0       :     Original 
  * Rev1.1       :     Add TimeStamp_minute  
  *                    Add TimeStamp_24hr_minute
@@ -16,6 +16,7 @@
  * Rev1.6             Intial board to BuildIN LED = > LOW  
  * Rev1.7       :     Fix bug for PZEM-003 and PZEM-016 were read data error  
  * Rev1.8       :     Add PZEM-003_begin, PZEM-016_begin and ec_modbusRTU_begin for initial set RS485 pin
+ * Rev1.9       :     Add WTR10-E Temperature and Humidity sensor Library  https://drive.google.com/file/d/1IvQAiFvQQUhx2TvupqxN9jarXSEBrP-9/view?usp=sharing
  * website      :     http://www.tenergyinnovation.co.th
  * Email        :     uten.boonliam@innovation.co.th
  * TEL          :     089-140-7205
@@ -29,7 +30,7 @@
 class tiny32
 {
 private:
-#define version_c  "1.8"
+#define version_c  "1.9"
 
     /* data */
 
@@ -106,6 +107,12 @@ int8_t PZEM_003_SetAddress(uint8_t id, uint8_t new_id);
 int8_t PZEM_003_SearchAddress(void);
 bool PZEM_003_begin(uint8_t rx = RXD3, uint8_t tx = TXD3);
 
+
+/* WTR10-E Modbus RTU Temperature and Humidity sensor module */
+bool WTR10_E_begin(uint8_t rx = RXD3, uint8_t tx = TXD3);
+bool WTR10_E(uint8_t id, float &temp, float &humi);
+float WTR10_E_tempeature(uint8_t id);
+float WTR10_E_humidity(uint8_t id);
 };
 
 #endif
