@@ -17,6 +17,7 @@
  * Rev1.7       :     Fix bug for PZEM-003 and PZEM-016 were read data error  
  * Rev1.8       :     Add PZEM-003_begin, PZEM-016_begin and ec_modbusRTU_begin for initial set RS485 pin
  * Rev1.9       :     Add WTR10-E Temperature and Humidity sensor Library  https://drive.google.com/file/d/1IvQAiFvQQUhx2TvupqxN9jarXSEBrP-9/view?usp=sharing
+ * Rev2.0       :     Improve Code
  * website      :     http://www.tenergyinnovation.co.th
  * Email        :     uten.boonliam@innovation.co.th
  * TEL          :     089-140-7205
@@ -30,7 +31,7 @@
 class tiny32
 {
 private:
-#define version_c  "1.9"
+#define version_c  "2.0"
 
     /* data */
 
@@ -113,6 +114,137 @@ bool WTR10_E_begin(uint8_t rx = RXD3, uint8_t tx = TXD3);
 bool WTR10_E(uint8_t id, float &temp, float &humi);
 float WTR10_E_tempeature(uint8_t id);
 float WTR10_E_humidity(uint8_t id);
-};
 
+
+/* XY-MD02 Modbus RTU Temperature and Humidity sensor module */
+bool XY_MD02_begin(uint8_t rx = RXD2, uint8_t tx = TXD2);
+bool XY_MD02(uint8_t id, float &temp, float &humi);
+float XY_MD02_tempeature(uint8_t id);
+float XY_MD02_humidity(uint8_t id);
+int8_t XY_MD02_searchAddress(void);
+int8_t XY_MD02_SetAddress(uint8_t id, uint8_t new_id);
+
+/* SOIL MOISTURE PR-3000-H-N01 sensor (RS485) module */
+bool PR3000_H_N01_begin(uint8_t rx = RXD2, uint8_t tx = TXD2);
+bool PR3000_H_N01(float &temp, float &humi);
+float PR3000_H_N01_tempeature();
+float PR3000_H_N01_humidity();
+
+/* RS485 Water Flow Meter RS485 MODBUS output  */
+bool WATER_FLOW_METER_begin(uint8_t rx = RXD2, uint8_t tx = TXD2);
+int8_t WATER_FLOW_METER_searchAddress(void);
+int8_t WATER_FLOW_METER_SetAddress(uint8_t id, uint8_t new_id);
+float WATER_FLOW_METER(uint8_t id);
+
+
+/* PYR20-Solar Radiation/Pyranometer Sensor, RS485, Modbus */
+bool PYR20_begin(uint8_t rx = RXD2, uint8_t tx = TXD2);
+int8_t PYR20_searchAddress(void);
+int8_t PYR20_SetAddress(uint8_t id, uint8_t new_id);
+int16_t PYR20_read(uint8_t id);
+
+/* tiny32 ModbusRTU communication*/
+bool tiny32_ModbusRTU_begin(uint8_t rx = RXD2, uint8_t tx = TXD2);
+int8_t tiny32_ModbusRTU_searchAddress(void);
+int8_t tiny32_ModbusRTU_setAddress(uint8_t id, uint8_t new_id);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2, float &val3, float &val4, float &val5, float &val6, float &val7, float &val8, float &val9, float &val10);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2, float &val3, float &val4, float &val5, float &val6, float &val7, float &val8, float &val9);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2, float &val3, float &val4, float &val5, float &val6, float &val7, float &val8);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2, float &val3, float &val4, float &val5, float &val6, float &val7);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2, float &val3, float &val4, float &val5, float &val6);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2, float &val3, float &val4, float &val5);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2, float &val3, float &val4);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2, float &val3);
+bool tiny32_ModbusRTU(uint8_t id, float &val1, float &val2);
+bool tiny32_ModbusRTU(uint8_t id, float &val1);
+
+
+
+/* Enenergic ModbusRTU PowerMeter*/
+bool ENenergic_begin(uint8_t rx = RXD2, uint8_t tx = TXD2);
+int8_t ENenergic_searchAddress(void);
+int8_t ENenergic_setAddress(uint8_t id, uint8_t new_id);
+float ENenergic_getTemperature(uint8_t id);
+bool ENenergic_Volt_L_N(uint8_t id, float &L1_N, float &L2_N, float &L3_N);
+bool ENenergic_Volt_L_L(uint8_t id, float &L1_L2, float &L2_L3, float &L3_L1);
+bool ENenergic_Current_L(uint8_t id, float &L1, float &L2, float &L3);
+float ENenergic_NeutralCurrent(uint8_t id);
+float ENenergic_Freq(uint8_t id);
+bool ENenergic_PhaseVolt_Angle(uint8_t id, float &L1, float &L2, float &L3);
+bool ENenergic_PhaseCurrent_Angle(uint8_t id, float &L1, float &L2, float &L3);
+
+/* Schneider EasyLogic PM2xxx Digital Power Meter */
+bool SchneiderPM2xxx_begin(uint8_t rx = RXD2, uint8_t tx = TXD2);
+int8_t SchneiderPM2xxx_searchAddress(void);
+
+bool SchneiderPM2xxx_MeteringSetup(void);
+
+
+float SchneiderPM2xxx_CurrentA(uint8_t id);
+float SchneiderPM2xxx_CurrentB(uint8_t id);
+float SchneiderPM2xxx_CurrentC(uint8_t id);
+float SchneiderPM2xxx_CurrentN(uint8_t id);
+float SchneiderPM2xxx_CurrentG(uint8_t id);
+float SchneiderPM2xxx_CurrentAvg(uint8_t id);
+float SchneiderPM2xxx_CurrentUnblanceA(uint8_t id);
+float SchneiderPM2xxx_CurrentUnblanceB(uint8_t id);
+float SchneiderPM2xxx_CurrentUnblanceC(uint8_t id);
+float SchneiderPM2xxx_CurrentUnblanceWorst(uint8_t id);
+
+float SchneiderPM2xxx_Voltage_AB(uint8_t id);
+float SchneiderPM2xxx_Voltage_BC(uint8_t id);
+float SchneiderPM2xxx_Voltage_CA(uint8_t id);
+float SchneiderPM2xxx_Voltage_LL_Avg(uint8_t id);
+float SchneiderPM2xxx_Voltage_AN(uint8_t id);
+float SchneiderPM2xxx_Voltage_BN(uint8_t id);
+float SchneiderPM2xxx_Voltage_CN(uint8_t id);
+float SchneiderPM2xxx_Voltage_LN_Avg(uint8_t id);
+
+float SchneiderPM2xxx_VoltageUnblance_AB(uint8_t id);
+float SchneiderPM2xxx_VoltageUnblance_BC(uint8_t id);
+float SchneiderPM2xxx_VoltageUnblance_CA(uint8_t id);
+float SchneiderPM2xxx_VoltageUnblance_LL_Worst(uint8_t id);
+float SchneiderPM2xxx_VoltageUnblance_AN(uint8_t id);
+float SchneiderPM2xxx_VoltageUnblance_BN(uint8_t id);
+float SchneiderPM2xxx_VoltageUnblance_CN(uint8_t id);
+float SchneiderPM2xxx_VoltageUnblance_LN_Worst(uint8_t id);
+
+float SchneiderPM2xxx_ActivePowerA(uint8_t id);
+float SchneiderPM2xxx_ActivePowerB(uint8_t id);
+float SchneiderPM2xxx_ActivePowerC(uint8_t id);
+float SchneiderPM2xxx_ActivePowerTotal(uint8_t id);
+
+float SchneiderPM2xxx_ReactivePowerA(uint8_t id);
+float SchneiderPM2xxx_ReactivePowerB(uint8_t id);
+float SchneiderPM2xxx_ReactivePowerC(uint8_t id);
+float SchneiderPM2xxx_ReactivePowerTotal(uint8_t id);
+
+float SchneiderPM2xxx_ApparentPowerA(uint8_t id);
+float SchneiderPM2xxx_ApparentPowerB(uint8_t id);
+float SchneiderPM2xxx_ApparentPowerC(uint8_t id);
+float SchneiderPM2xxx_ApparentPowerTotal(uint8_t id);
+
+float SchneiderPM2xxx_PowerFactorA(uint8_t id);
+float SchneiderPM2xxx_PowerFactorB(uint8_t id);
+float SchneiderPM2xxx_PowerFactorC(uint8_t id);
+float SchneiderPM2xxx_PowerFactorTotal(uint8_t id);
+
+float SchneiderPM2xxx_Freq(uint8_t id);
+
+/* EASTRON 120CT Modbus Powermeter */
+bool tiny32_SDM120CT_begin(uint8_t rx = RXD2, uint8_t tx = TXD2);
+int8_t tiny32_SDM120CT_searchAddress(void);
+int8_t tiny32_SDM120CT_setAddress(uint8_t id, uint8_t new_id);
+float tiny32_SDM120CT_Volt(uint8_t id);
+float tiny32_SDM120CT_Freq(uint8_t id);
+float tiny32_SDM120CT_Power(uint8_t id);
+float tiny32_SDM120CT_Current(uint8_t id);
+float tiny32_SDM120CT_AP_Power(uint8_t id); //Apparent power
+float tiny32_SDM120CT_Reac_Power(uint8_t id); //Reactive power
+float tiny32_SDM120CT_Total_Energy(uint8_t id);
+float tiny32_SDM120CT_POWER_FACTOR(uint8_t id);
+
+
+
+};
 #endif
